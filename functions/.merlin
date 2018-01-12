@@ -1,0 +1,6 @@
+B ../_build/default/functions
+B ../_build/default/machine
+FLG -open Functions -g
+PKG str
+PKG unix
+S ../machine

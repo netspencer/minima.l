@@ -1,0 +1,3 @@
+B ../_build/default/machine
+FLG -open Machine -g
+PKG unix
