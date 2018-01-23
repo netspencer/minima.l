@@ -13,7 +13,7 @@ build: [
 ]
 
 build-test: [
-  ["make" "test"]
+  [make "test"]
 ]
 
 depends: [
@@ -21,4 +21,4 @@ depends: [
   "menhir"   { build & >= "20170418" }
 ]
 
-available: ocaml-version >= "4.02.3"
+available: ocaml-version >= "4.05.0"
