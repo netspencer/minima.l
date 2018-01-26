@@ -20,15 +20,15 @@ open Utils
 
 let name = "cons"
 
-let rec run = function
+let rec run closure = function
   | Nil -> Ok Nil
   | Cons (a, Cons (b, Nil)) ->
-    Interpreter.eval a >>= fun a ->
-    Interpreter.eval b >>= fun b ->
+    Interpreter.eval ~closure a >>= fun a ->
+    Interpreter.eval ~closure b >>= fun b ->
     Ok (Cons (a, b))
   | Cons (a, b) ->
-    Interpreter.eval a >>= fun a ->
-    run b >>= fun b ->
+    Interpreter.eval ~closure a >>= fun a ->
+    run closure b >>= fun b ->
     Ok (Cons (a, b))
   | t -> Error.undefined t
 

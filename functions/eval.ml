@@ -20,8 +20,8 @@ open Utils
 
 let name = "eval"
 
-let run = function
-  | Cons (a, Nil)  -> Interpreter.eval a >>= Interpreter.eval
+let run closure = function
+  | Cons (a, Nil)  -> Interpreter.eval ~closure a >>= Interpreter.eval ~closure
   | t -> Error.undefined t
 
 let hook = (name, run)

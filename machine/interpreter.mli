@@ -22,8 +22,8 @@ val set_prefix: string -> unit
 val in_channel: (string * in_channel * Lexing.lexbuf) ref
 val out_channel: (string * out_channel) ref
 
-val push: Grammar.t -> Grammar.t -> (Grammar.t, string) result
+val push: closure:Grammar.t Closure.t -> Grammar.t -> Grammar.t -> (Grammar.t, string) result
 val pop: Grammar.t -> unit
 
 val conc: Grammar.t -> Grammar.t -> Grammar.t
-val eval: Grammar.t -> (Grammar.t, string) result
+val eval: closure:Grammar.t Closure.t -> Grammar.t -> (Grammar.t, string) result

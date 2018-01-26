@@ -16,19 +16,25 @@
 
 open Grammar
 
+(*
+ * World definition.
+ *)
+
 let world = Hashtbl.create 1000
 
 let set sym t =
   Trace.bind sym t;
   Hashtbl.add world sym t
 
-let get sym =
-  match Hashtbl.find_opt world sym with
-  | Some s -> s
-  | None   -> Nil
+let get ~closure sym =
+  match Closure.find_opt sym closure with
+  | Some v -> v
+  | None -> match Hashtbl.find_opt world sym with
+    | Some s -> s
+    | None   -> Nil
 
 let shift v =
-  get "@@" |> set "@@@";
-  get "@"  |> set "@@";
-  v        |> set "@";
+  get ~closure:Closure.empty "@@" |> set "@@@";
+  get ~closure:Closure.empty "@"  |> set "@@";
+  v                               |> set "@";
   Ok v

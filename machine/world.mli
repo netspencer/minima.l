@@ -15,6 +15,6 @@
  *)
 
 val set: string -> Grammar.t -> unit
-val get: string -> Grammar.t
+val get: closure:Grammar.t Closure.t -> string -> Grammar.t
 
 val shift: Grammar.t -> (Grammar.t, string) result

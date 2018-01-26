@@ -42,7 +42,7 @@ entry:
 escape:
   | QUOTE;     c = cell { Grammar.Cons (Grammar.Symbol "quote", c) }
   | BACKQUOTE; c = cell {
-    match Interpreter.eval c with
+    match Interpreter.eval ~closure:Closure.empty c with
     | Ok c -> c
     | Error _ -> Nil
   }
@@ -54,7 +54,7 @@ cells:
   |                                      { Grammar.Nil         }
   | a = cell;        b = cells           { Grammar.Cons (a, b) }
   | a = cell; TILDE; b = cell; c = cells {
-    match Interpreter.eval b with
+    match Interpreter.eval ~closure:Closure.empty b with
     | Ok b -> Interpreter.conc c (Grammar.Cons (a, b))
     | Error _ -> Interpreter.conc c (Grammar.Cons (a, Nil))
   }

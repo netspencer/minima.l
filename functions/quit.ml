@@ -19,7 +19,7 @@ open Grammar
 
 let name = "quit"
 
-let run = function
+let run _ = function
   | Nil -> raise End_of_file
   | t -> Error.undefined t
 

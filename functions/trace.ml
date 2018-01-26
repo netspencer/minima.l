@@ -19,7 +19,7 @@ open Grammar
 
 let name = "trace"
 
-let run = function
+let run _ = function
   | Nil -> Trace.toggle ()
   | t -> Error.undefined t
 

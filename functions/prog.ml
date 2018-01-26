@@ -19,9 +19,9 @@ open Grammar
 
 let name = "prog"
 
-let rec run = function
-  | Cons (a, Nil) -> Interpreter.eval a
-  | Cons (a, b) -> ignore (Interpreter.eval a); run b
+let rec run closure = function
+  | Cons (a, Nil) -> Interpreter.eval ~closure a
+  | Cons (a, b) -> ignore (Interpreter.eval ~closure a); run closure b
   | t -> Error.undefined t
 
 let hook = (name, run)

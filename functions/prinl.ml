@@ -22,9 +22,9 @@ open Utils
 
 let name = "prinl"
 
-let run t =
+let run closure t =
   !Interpreter.out_channel
-  |> fun (_, chan) -> Prin.prin chan t >>= fun r ->
+  |> fun (_, chan) -> Prin.prin ~closure chan t >>= fun r ->
   Printf.fprintf chan "\n";
   flush chan;
   Ok r

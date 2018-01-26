@@ -34,15 +34,15 @@ let setenv = function
     Ok v
   | a, b -> Error.undefined (Cons (a, b))
 
-let run = function
+let run closure = function
   | Cons (a, Nil) ->
-    Interpreter.eval a >>= fun a ->
+    Interpreter.eval ~closure a >>= fun a ->
     getenv a
   | Cons (a, Cons (b, Nil)) ->
-    Interpreter.eval a >>= fun a ->
-    Interpreter.eval b >>= fun b ->
-    getenv a          >>= fun c ->
-    setenv (a, b)     >>= fun _ ->
+    Interpreter.eval ~closure a >>= fun a ->
+    Interpreter.eval ~closure b >>= fun b ->
+    getenv a                    >>= fun c ->
+    setenv (a, b)               >>= fun _ ->
     Ok c
   | t -> Error.undefined t
 

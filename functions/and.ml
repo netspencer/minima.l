@@ -20,10 +20,10 @@ open Utils
 
 let name = "and"
 
-let run = function
+let run closure = function
   | Cons (a, Cons (b, Nil)) ->
-    Interpreter.eval a >>= fun a ->
-    Interpreter.eval b >>= fun b ->
+    Interpreter.eval ~closure a >>= fun a ->
+    Interpreter.eval ~closure b >>= fun b ->
     begin match a, b with
       | T,   T   -> Ok T
       | T,   Nil -> Ok Nil

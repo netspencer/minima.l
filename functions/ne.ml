@@ -26,10 +26,10 @@ let compare (a, b) =
   | Nil -> Ok T
   | t   -> Error.undefined t
 
-let run = function
+let run closure = function
   | Cons (a, Cons (b, Nil)) ->
-    Interpreter.eval a >>= fun a ->
-    Interpreter.eval b >>= fun b ->
+    Interpreter.eval ~closure a >>= fun a ->
+    Interpreter.eval ~closure b >>= fun b ->
     compare (a, b)
   | t -> Error.undefined t
 

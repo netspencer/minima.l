@@ -20,7 +20,7 @@ open Utils
 
 let name = "throw"
 
-let run = function
+let run _ = function
   | Cons (a, Nil) -> raise (Interpreter.Throw a)
   | t -> Error.undefined t
 

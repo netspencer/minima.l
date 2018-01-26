@@ -18,8 +18,9 @@ type t =
   | T
   | Nil
   | Any
-  | Function  of string * (t -> (t, string) result)
-  | Symbol    of string
-  | Number    of int64
-  | String    of string
-  | Cons      of t * t
+  | Internal of string * (t Closure.t -> t -> (t, string) result)
+  | Function of string * t * t * t Closure.t
+  | Symbol   of string
+  | Number   of int64
+  | String   of string
+  | Cons     of t * t

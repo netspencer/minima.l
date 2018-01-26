@@ -18,16 +18,17 @@ open Machine
 open Grammar
 open Utils
 
-let name = "+"
+let name = "closure"
+
+let to_list c =
+  Closure.fold (fun s e acc -> Cons (Cons (String s, e), acc)) c Nil
+
+let process = function
+  | Function (_, _, _, c) -> Ok (to_list c)
+  | _ -> Ok Nil
 
 let run closure = function
-  | Cons (a, Cons (b, Nil)) ->
-    Interpreter.eval ~closure a >>= fun a ->
-    Interpreter.eval ~closure b >>= fun b ->
-    begin match a, b with
-      | Number i, Number j -> Ok (Number (Int64.add i j))
-      | _ -> Error.undefined (Cons (a, b))
-    end
-  | t -> Error.undefined t
+  | Cons (a, Nil)
+  | a -> Interpreter.eval ~closure a >>= process
 
 let hook = (name, run)

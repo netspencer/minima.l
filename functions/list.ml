@@ -25,16 +25,16 @@ let name = "list"
  * runs down the recursion before evaluating 'a'.
  *)
 
-let rec run = function
+let rec run closure = function
   | Cons (a, Nil) ->
-    Interpreter.eval a >>= fun a ->
+    Interpreter.eval a ~closure >>= fun a ->
     Ok (Cons (a, Nil))
   | Cons (a, b) ->
-    Interpreter.eval a >>= fun a ->
-    run b >>= fun b ->
+    Interpreter.eval ~closure a >>= fun a ->
+    run closure b >>= fun b ->
     Ok (Cons (a, b))
   | t ->
-    Interpreter.eval t >>= fun t ->
+    Interpreter.eval ~closure t >>= fun t ->
     Ok (Cons (t, Nil))
 
 let hook = (name, run)

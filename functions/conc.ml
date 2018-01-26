@@ -20,13 +20,13 @@ open Utils
 
 let name = "conc"
 
-let rec run = function
+let rec run closure = function
   | Nil -> Ok Nil
-  | Cons (a, Nil) -> Interpreter.eval a
+  | Cons (a, Nil) -> Interpreter.eval ~closure a
   | Cons (a, rest) ->
-    Interpreter.eval a >>= fun a ->
-    run rest >>= fun rest ->
+    Interpreter.eval ~closure a >>= fun a ->
+    run closure rest >>= fun rest ->
     Ok (Interpreter.conc rest a)
-  | a -> Interpreter.eval a
+  | a -> Interpreter.eval ~closure a
 
 let hook = (name, run)

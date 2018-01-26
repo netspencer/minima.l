@@ -14,20 +14,11 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  *)
 
-open Machine
-open Grammar
-open Utils
+module Map = Map.Make(String)
 
-let name = "+"
+type 'a t = 'a Map.t
 
-let run closure = function
-  | Cons (a, Cons (b, Nil)) ->
-    Interpreter.eval ~closure a >>= fun a ->
-    Interpreter.eval ~closure b >>= fun b ->
-    begin match a, b with
-      | Number i, Number j -> Ok (Number (Int64.add i j))
-      | _ -> Error.undefined (Cons (a, b))
-    end
-  | t -> Error.undefined t
-
-let hook = (name, run)
+let empty = Map.empty
+let add = Map.add
+let find_opt = Map.find_opt
+let fold = Map.fold

@@ -22,8 +22,9 @@ let functions = [
   Functions.And.hook;
   Functions.Car.hook;
   Functions.Catch.hook;
-  Functions.Cdr.hook;
   Functions.Case.hook;
+  Functions.Cdr.hook;
+  Functions.Closure.hook;
   Functions.Conc.hook;
   Functions.Cons.hook;
   Functions.Def.hook;
@@ -38,6 +39,7 @@ let functions = [
   Functions.If.hook;
   Functions.In.hook;
   Functions.Join.hook;
+  Functions.Lambda.hook;
   Functions.Le.hook;
   Functions.Let.hook;
   Functions.Line.hook;
@@ -74,7 +76,7 @@ let functions = [
 ]
 
 let register (name, fn) =
-  World.set name (Grammar.Function (name, fn))
+  World.set name (Grammar.Internal (name, fn))
 
 (*
  * Prefix management.

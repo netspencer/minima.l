@@ -41,8 +41,8 @@ let load = function
     else Error.not_found fn
   | t -> Error.undefined t
 
-let run = function
+let run closure = function
   | Cons (a, Nil)
-  | a -> Interpreter.eval a >>= fun a -> load a
+  | a -> Interpreter.eval ~closure a >>= fun a -> load a
 
 let hook = (name, run)

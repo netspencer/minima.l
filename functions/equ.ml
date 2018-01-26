@@ -20,21 +20,30 @@ open Utils
 
 let name = "="
 
-let rec compare = function
-  | T, T     -> Ok T
-  | Nil, Nil -> Ok T
-  | Any, _   -> Ok T
-  | _, Any   -> Ok T
-  | Number i, Number j when i = j            -> Ok T
-  | String i, String j when String.equal i j -> Ok T
-  | Symbol i, Symbol j when String.equal i j -> Ok T
-  | Cons (a0, b0), Cons (a1, b1) when compare (a0, a1) = Ok T && compare (b0, b1) = Ok T -> Ok T
-  | _ -> Ok Nil
+let rec (==) a b =
+  match a, b with
+  (* Atoms. *)
+  | T, T     -> true
+  | Nil, Nil -> true
+  | Any, _   -> true
+  | _, Any   -> true
+  | Number i, Number j -> i = j
+  | String i, String j
+  | Symbol i, Symbol j -> String.equal i j
+  (* Functions. *)
+  | Function (_, a0, b0, _), Cons (a1, Cons (b1, _))
+  | Function (_, a0, b0, _), Function (_, a1, b1, _) -> a0 == a1 && b0 == b1
+  (* Lists. *)
+  | Cons (a0, b0), Cons (a1, b1) -> a0 == a1 && b0 == b1
+  | _ -> false
 
-let run = function
+let compare (a, b) =
+  Ok (if a == b then T else Nil)
+
+let run closure = function
   | Cons (a, Cons (b, Nil)) ->
-    Interpreter.eval a >>= fun a ->
-    Interpreter.eval b >>= fun b ->
+    Interpreter.eval ~closure a >>= fun a ->
+    Interpreter.eval ~closure b >>= fun b ->
     compare (a, b)
   | t -> Error.undefined t
 

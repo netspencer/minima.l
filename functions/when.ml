@@ -20,11 +20,11 @@ open Utils
 
 let name = "?"
 
-let run = function
+let run closure = function
   | Cons (a, Cons (b, Nil)) ->
-    Interpreter.eval a >>= fun a ->
+    Interpreter.eval ~closure a >>= fun a ->
     begin match a with
-      | T -> Interpreter.eval b
+      | T -> Interpreter.eval ~closure b
       | _ -> Ok Nil
     end
   | t -> Error.undefined t

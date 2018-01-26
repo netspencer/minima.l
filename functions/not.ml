@@ -20,10 +20,10 @@ open Utils
 
 let name = "not"
 
-let run = function
+let run closure = function
   | Cons (a, Nil)
   | a ->
-    Interpreter.eval a >>= function
+    Interpreter.eval ~closure a >>= function
     | T -> Ok Nil
     | Nil -> Ok T
     | t -> Error.undefined t

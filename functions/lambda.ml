@@ -17,17 +17,37 @@
 open Machine
 open Grammar
 
-let name = "def"
+let name = "\\"
+
+module Args = Set.Make(String)
+
+let rec define args set =
+  match args with
+  | Symbol s -> Args.add s set
+  | Cons (a, b) -> set |> define a |> define b
+  | _ -> set
+
+let rec collect ~closure name args body c =
+  match body with
+  | Symbol s when String.compare name s <> 0 ->
+    begin match Args.find_opt s args with
+      | Some s -> c
+      | None -> Closure.add s (World.get ~closure s) c
+    end
+  | Cons (a, b) ->
+    c |> collect ~closure name args a |> collect ~closure name args b
+  | _ -> c
+
+let mkfun ~closure name args body =
+  let limits = define args Args.empty in
+  let closure = collect ~closure name limits body Closure.empty in
+  Function (name, args, body, closure)
 
 let rec run closure = function
-  | Cons (Symbol name as sym, (Cons (Nil, Cons (String _, Cons (Cons _ as body, Nil)))))
-  | Cons (Symbol name as sym, (Cons (Nil, Cons (Cons _ as body, Nil)))) ->
-    World.set name (Lambda.mkfun ~closure name Nil body);
-    Ok sym
-  | Cons (Symbol name as sym, (Cons (Cons _ as args, Cons (String _, Cons (Cons _ as body, Nil)))))
-  | Cons (Symbol name as sym, (Cons (Cons _ as args, Cons (Cons _ as body, Nil)))) ->
-    World.set name (Lambda.mkfun ~closure name args body);
-    Ok sym
+  | Cons (Nil, Cons (Cons _ as body, Nil)) ->
+    Ok (mkfun ~closure "\\" Nil body)
+  | Cons (Cons _ as args, Cons (Cons _ as body, Nil)) ->
+    Ok (mkfun ~closure "\\" args body)
   | t -> Error.undefined t
 
 let hook = (name, run)

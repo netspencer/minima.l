@@ -34,11 +34,11 @@ let split = function
     )
   | a, b -> Error.undefined (Cons (a, b))
 
-let run = function
+let run closure = function
   | Cons (sep, Cons (str, Nil))
   | Cons (sep, str) ->
-    Interpreter.eval sep >>= fun sep ->
-    Interpreter.eval str >>= fun str ->
+    Interpreter.eval ~closure sep >>= fun sep ->
+    Interpreter.eval ~closure str >>= fun str ->
     split (sep, str)
   | t -> Error.undefined t
 

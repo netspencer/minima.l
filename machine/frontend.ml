@@ -33,7 +33,7 @@ let parse_with_error lexbuf =
     None
 
 let eval l =
-  Interpreter.eval l >>= World.shift
+  Interpreter.eval ~closure:Closure.empty l >>= World.shift
 
 let parse lexbuf =
   match parse_with_error lexbuf with

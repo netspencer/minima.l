@@ -19,6 +19,6 @@ open Grammar
 
 let name = "quote"
 
-let run l = Ok l
+let run _ l = Ok l
 
 let hook = (name, run)

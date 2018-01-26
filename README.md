@@ -64,24 +64,36 @@ displayed as `<fn>`:
 
 ### Lambda functions
 
-The `lambda` keyword does not exist. It is replaced by list evaluation of the
-form `'(args . prg)`. Arguments can be a single symbol or a list of symbols.
-Example:
+Lambda functions are defined using the `\` keyword. Invocation of `\` is
+similar to `def`:
 
 ```lisp
-: ('((X Y)(+ X Y)) 1 1)
+: ((\(X Y)(+ X Y)) 1 1)
 -> 2
 
-: ('(x (map '((n)(+ n 1)) x)) '(1 2 3 4))
+: ((\x (map (\(n)(+ n 1)) x)) '(1 2 3 4))
 -> (2 3 4 5)
 ```
 
-_Ipso facto_, the following expressions are equivalent:
+### Closures
+
+Function definitions carry a symbol closure. The closure contain the value of
+the symbol as they were define at the call site. This is very useful for
+situation like the `filter` function:
 
 ```lisp
-(def add (X Y) (+ X Y))
-(setq add '((X Y)(+ X Y)))
+(def filter (fun lst)
+  (foldr
+    (\(e acc) (?: (fun e) acc (cons e acc)))
+    lst NIL))
 ```
+
+In the code above, `filter` calls `foldr` with a lambda function that refers to
+one of its argument, `fun`. However, `fun` is also used as one of `foldr`
+arguments.  Without closure, the late evaluation of the lambda function in
+`filter` would resolve `fun` as itself and the execution would end up in a stack
+overflow. With the closure, `fun` resolves to the value passed to `filter` and
+the execution proceeeds as expected.
 
 ### Argument assignation
 
@@ -98,9 +110,9 @@ deconstruction. For instance, with `def`:
 Or with a lambda:
 
 ```lisp
-: (setq data '(("hello" . 1) ("world" . 2)))
+: (setq data (\("hello" . 1) ("world" . 2)))
 -> (("hello" . 1) ("world" . 2))
-: (foldl '((acc (_ . v))(+ acc v)) 0 data)
+: (foldl (\(acc (_ . v))(+ acc v)) 0 data)
 -> 3
 ```
 
@@ -410,14 +422,14 @@ arity:
 
 ```lisp
 : (setq lambdas
-    '(("inc" ((x)(+ x 2)))
-      ("add" ((x y)(+ x y)))
-      ("acc" ((l)(foldl + 10 l)))
+    '(("inc" `(\(x)(+ x 2)))
+      ("add" `(\(x y)(+ x y)))
+      ("acc" `(\(l)(foldl + 10 l)))
       ))
 -> (("inc" ((x) (+ x 2))) ("add" ((x y) (+ x y))) ("acc" ((l) (foldl + 10 l))))
 
 : (def filter (lamdas)
-    (foldr '(((_ fn) acc)
+    (foldr (\((_ fn) acc)
              (case fn
                (((_  ) _) (cons @ acc))
                (((_ _) _) acc)
@@ -431,7 +443,7 @@ arity:
 : (filter lambdas)
 -> (((x) (+ x 2)) ((l) (foldl + 10 l)))
 
-: (map '((l)(l 1)) (filter lambdas))
+: (map (\(l)(l 1)) (filter lambdas))
 -> (3 11)
 ```
 
@@ -635,7 +647,7 @@ appended to it.
 -> (("Name" "Age" "City") ("Alex" "32" "London") ("John" "17" "Chicago") ("Marc" "25" "Lyon") ("Sophie" "29" "Nice"))
 
 : (out "result.csv"
-    (iter '((t)(prinl (join ", " t))) DATA))
+    (iter (\(t)(prinl (join ", " t))) DATA))
 -> ("Sophie" "29" "Nice")
 ```
 

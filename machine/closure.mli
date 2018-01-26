@@ -14,20 +14,9 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  *)
 
-open Machine
-open Grammar
-open Utils
+type 'a t
 
-let name = "+"
-
-let run closure = function
-  | Cons (a, Cons (b, Nil)) ->
-    Interpreter.eval ~closure a >>= fun a ->
-    Interpreter.eval ~closure b >>= fun b ->
-    begin match a, b with
-      | Number i, Number j -> Ok (Number (Int64.add i j))
-      | _ -> Error.undefined (Cons (a, b))
-    end
-  | t -> Error.undefined t
-
-let hook = (name, run)
+val empty: 'a t
+val add: string -> 'a -> 'a t -> 'a t
+val find_opt: string -> 'a t -> 'a option
+val fold: (string -> 'a -> 'b -> 'b) -> 'a t -> 'b -> 'b

@@ -21,7 +21,7 @@ open Lexing
 
 let name = "line"
 
-let run = function
+let run _ = function
   | Nil ->
     begin try
         !Interpreter.in_channel

@@ -20,15 +20,15 @@ open Utils
 
 let name = "setq"
 
-let rec run = function
+let rec run closure = function
   | Cons (Symbol a, Cons (b, Nil)) ->
-    Interpreter.eval b >>= fun ev ->
+    Interpreter.eval ~closure b >>= fun ev ->
     World.set a ev;
     Ok ev
   | Cons (Symbol a, Cons (b, c)) ->
-    Interpreter.eval b >>= fun ev ->
+    Interpreter.eval ~closure b >>= fun ev ->
     World.set a ev;
-    run c
+    run closure c
   | t -> Error.undefined t
 
 let hook = (name, run)

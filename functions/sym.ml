@@ -20,9 +20,9 @@ open Utils
 
 let name = "sym"
 
-let run = function
+let run closure = function
   | Cons (a, Nil) ->
-    Interpreter.eval a >>= fun a ->
+    Interpreter.eval ~closure a >>= fun a ->
     begin match a with
       | String n -> Ok (Symbol n)
       | t -> Error.undefined t

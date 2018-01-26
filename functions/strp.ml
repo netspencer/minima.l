@@ -24,8 +24,8 @@ let strp = function
   | String _ -> Ok T
   | _ -> Ok Nil
 
-let run = function
+let run closure = function
   | Cons (a, Nil)
-  | a -> Interpreter.eval a >>= strp
+  | a -> Interpreter.eval ~closure a >>= strp
 
 let hook = (name, run)

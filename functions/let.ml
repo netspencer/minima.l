@@ -20,19 +20,19 @@ open Utils
 
 let name = "let"
 
-let rec bind = function
+let rec bind ~closure = function
   | Nil -> Ok Nil
   | Cons (Cons (args, values), rest) ->
-    Interpreter.eval values >>=
-    Interpreter.push args   >>= fun args ->
-    bind rest               >>= fun rest ->
+    Interpreter.eval ~closure values >>=
+    Interpreter.push ~closure args   >>= fun args ->
+    bind ~closure rest               >>= fun rest ->
     Ok (Interpreter.conc args rest)
   | t -> Error.undefined t
 
-let run = function
+let run closure = function
   | Cons (assignments, Cons (prg, Nil)) ->
-    bind assignments >>= fun old ->
-    let res = Interpreter.eval prg in
+    bind ~closure assignments >>= fun old ->
+    let res = Interpreter.eval ~closure prg in
     Interpreter.pop old;
     res
   | t -> Error.undefined t

@@ -20,10 +20,10 @@ open Utils
 
 let name = "-"
 
-let run = function
+let run closure = function
   | Cons (a, Cons (b, Nil)) ->
-    Interpreter.eval a >>= fun a ->
-    Interpreter.eval b >>= fun b ->
+    Interpreter.eval ~closure a >>= fun a ->
+    Interpreter.eval ~closure b >>= fun b ->
     begin match a, b with
       | Number i, Number j -> Ok (Number (Int64.sub i j))
       | a, b -> Error.undefined (Cons (a, b))

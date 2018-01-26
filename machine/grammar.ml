@@ -17,14 +17,15 @@
 include Grammar_types
 
 let rec to_string = function
-  | T               -> "T"
-  | Nil             -> "NIL"
-  | Any             -> "_"
-  | Function (s, _) -> "<" ^ s ^ ">"
-  | Symbol s        -> Printf.sprintf "%s" s
-  | Number n        -> Printf.sprintf "%Ld" n
-  | String s        -> Printf.sprintf "\"%s\"" s
-  | Cons _ as l     -> "(" ^ (list_to_string l) ^ ")"
+  | T                     -> "T"
+  | Nil                   -> "NIL"
+  | Any                   -> "_"
+  | Internal (s, _)       -> "<" ^ s ^ ">"
+  | Function (s, a, b, _) -> "(" ^ (to_string a) ^ (to_string b) ^ ")"
+  | Symbol s              -> Printf.sprintf "%s" s
+  | Number n              -> Printf.sprintf "%Ld" n
+  | String s              -> Printf.sprintf "\"%s\"" s
+  | Cons _ as l           -> "(" ^ (list_to_string l) ^ ")"
 
 and list_to_string = function
   | Cons (a, Nil)           -> to_string a

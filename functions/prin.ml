@@ -22,19 +22,20 @@ open Utils
 
 let name = "prin"
 
-let rec prin chan t =
+let rec prin ~closure chan t =
   match t with
-  | Nil             -> Ok t
-  | T               -> Printf.fprintf chan "T"; Ok t
-  | Any             -> Printf.fprintf chan "*"; Ok t
-  | Number n        -> Printf.fprintf chan "%Ld" n; Ok t
-  | String s        -> Printf.fprintf chan "%s" s; Ok t
-  | Function (s, _) -> Printf.fprintf chan "<%s>" s; Ok t
-  | Symbol s        -> Printf.fprintf chan "%s" s; Ok t
-  | Cons (a, Nil)   -> Interpreter.eval a >>= prin chan;
-  | Cons (a, b)     -> Interpreter.eval a >>= prin chan |> ignore; prin chan b
+  | Nil                   -> Ok t
+  | T                     -> Printf.fprintf chan "T"; Ok t
+  | Any                   -> Printf.fprintf chan "*"; Ok t
+  | Number n              -> Printf.fprintf chan "%Ld" n; Ok t
+  | String s              -> Printf.fprintf chan "%s" s; Ok t
+  | Internal (s, _)       -> Printf.fprintf chan "<%s>" s; Ok t
+  | Function (s, _, _, _) -> Printf.fprintf chan "[%s]" s; Ok t
+  | Symbol s              -> Printf.fprintf chan "%s" s; Ok t
+  | Cons (a, Nil)         -> Interpreter.eval ~closure a >>= prin ~closure chan;
+  | Cons (a, b)           -> Interpreter.eval ~closure a >>= prin ~closure chan |> ignore; prin ~closure chan b
 
-let run t =
-  !Interpreter.out_channel |> fun (_, chan) -> prin chan t
+let run closure t =
+  !Interpreter.out_channel |> fun (_, chan) -> prin ~closure chan t
 
 let hook = (name, run)

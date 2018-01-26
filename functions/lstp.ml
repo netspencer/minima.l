@@ -25,8 +25,8 @@ let lstp = function
   | Cons _ -> Ok T
   | _ -> Ok Nil
 
-let run = function
+let run closure = function
   | Cons (a, Nil)
-  | a -> Interpreter.eval a >>= lstp
+  | a -> Interpreter.eval ~closure a >>= lstp
 
 let hook = (name, run)

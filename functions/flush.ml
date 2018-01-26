@@ -19,7 +19,7 @@ open Grammar
 
 let name = "flush"
 
-let run = function
+let run _ = function
   | Nil ->
     !Interpreter.out_channel
     |> fun (_, chan) -> flush chan;

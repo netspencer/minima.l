@@ -20,10 +20,11 @@ open Utils
 
 let name = "or"
 
-let run = function
-  | Cons (a, Cons (b, Nil)) -> begin Interpreter.eval a >>= function
+let run closure = function
+  | Cons (a, Cons (b, Nil)) ->
+    begin Interpreter.eval ~closure a >>= function
     | T   -> Ok T
-    | Nil -> begin Interpreter.eval b >>= function
+    | Nil -> begin Interpreter.eval ~closure b >>= function
       | T   -> Ok T
       | Nil ->  Ok Nil
       | t -> Error.undefined t

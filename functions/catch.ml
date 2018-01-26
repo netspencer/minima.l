@@ -19,24 +19,24 @@ open Grammar
 
 let name = "catch"
 
-let rec process e = function
+let rec process ~closure e = function
   | Nil ->
     raise (Interpreter.Throw e)
   | Cons (Cons (v, hnd), others) ->
     if Equ.compare (e, v) = Ok T then
-      Interpreter.eval hnd
+      Interpreter.eval ~closure hnd
     else
-      process e others
+      process ~closure e others
   | _ -> Ok Nil
 
-let rec run = function
+let run closure = function
   | Cons (Cons _ as prg, exns) ->
     begin
       let tl = Trace.get () in
-      try Interpreter.eval prg
+      try Interpreter.eval ~closure prg
       with Interpreter.Throw e ->
         Trace.set tl;
-        process e exns
+        process ~closure e exns
     end
   | t -> Error.undefined t
 

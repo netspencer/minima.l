@@ -24,8 +24,8 @@ let symp = function
   | Symbol _ -> Ok T
   | _ -> Ok Nil
 
-let run = function
+let run closure = function
   | Cons (a, Nil)
-  | a -> Interpreter.eval a >>= symp
+  | a -> Interpreter.eval ~closure a >>= symp
 
 let hook = (name, run)

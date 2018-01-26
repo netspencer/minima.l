@@ -34,11 +34,11 @@ let rec join sep result = function
       join sep (result ^ sep ^ str) rest
   | t -> Error.undefined t
 
-let run = function
+let run closure = function
   | Cons (sep, Cons (lst, Nil))
   | Cons (sep, lst) ->
-    Interpreter.eval sep >>= fun sep ->
-    Interpreter.eval lst >>= fun lst ->
+    Interpreter.eval ~closure sep >>= fun sep ->
+    Interpreter.eval ~closure lst >>= fun lst ->
     begin match sep with
       | Nil -> join "" "" lst
       | String sep -> join sep "" lst

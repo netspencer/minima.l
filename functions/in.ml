@@ -21,14 +21,14 @@ open Utils
 
 let name = "in"
 
-let process = function
+let process ~closure = function
   | Nil, Cons (prg, Nil) ->
     let old = !Interpreter.in_channel in
     let buf = Lexing.from_channel stdin in
     buf.lex_curr_p <- { buf.lex_curr_p with pos_fname = "stdin" };
     Interpreter.in_channel := ("stdin", stdin, buf);
     begin try
-        let res = Interpreter.eval prg in
+        let res = Interpreter.eval ~closure prg in
         Interpreter.in_channel := old;
         res
       with e ->
@@ -44,7 +44,7 @@ let process = function
       buf.lex_curr_p <- { buf.lex_curr_p with pos_fname = filename };
       Interpreter.in_channel := (filename, chn, buf);
       begin try
-          let res = Interpreter.eval prg in
+          let res = Interpreter.eval ~closure prg in
           Interpreter.in_channel := old;
           Unix.close dsc;
           res
@@ -58,8 +58,8 @@ let process = function
   end
   | a, b -> Error.undefined (Cons (a, b))
 
-let run = function
-  | Cons (fn, prg) -> Interpreter.eval fn >>= fun fn -> process (fn, prg)
+let run closure = function
+  | Cons (fn, prg) -> Interpreter.eval ~closure fn >>= fun fn -> process ~closure (fn, prg)
   | t -> Error.undefined t
 
 let hook = (name, run)

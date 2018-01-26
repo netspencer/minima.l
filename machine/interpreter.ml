@@ -55,7 +55,7 @@ let rec conc next = function
  * Evaluation function.
  *)
 
-let rec push args values =
+let rec push ~closure args values =
   match args, values with
   (*
    * Pattern matching.
@@ -66,15 +66,15 @@ let rec push args values =
    * Symbol binding.
    *)
   | Symbol s, v ->
-    let old = Cons (Symbol s, Cons (World.get s, Nil)) in
+    let old = Cons (Symbol s, Cons (World.get ~closure s, Nil)) in
     World.set s v;
     Ok old
   (*
    * Recursive descent.
    *)
   | Cons (a0, a1), Cons (v0, v1) ->
-    push a0 v0 >>= fun b0 ->
-    push a1 v1 >>= fun b1 ->
+    push ~closure a0 v0 >>= fun b0 ->
+    push ~closure a1 v1 >>= fun b1 ->
     Ok (conc b0 b1)
   (*
    * Error scenarios.
@@ -85,35 +85,34 @@ and pop = function
   | Cons (Symbol s, Cons (v, rest)) -> World.set s v; pop rest
   | _ -> ()
 
-and bind args values = match args, values with
+and bind ~closure args values = match args, values with
   | Nil, _ -> Ok Nil
   | Cons (a0, args), Cons (v0, values) ->
-    eval v0 >>= fun v0 ->
-    bind args values >>= fun tl ->
-    push a0 v0 >>= fun hd ->
+    eval ~closure v0 >>= fun v0 ->
+    bind ~closure args values >>= fun tl ->
+    push ~closure a0 v0 >>= fun hd ->
     Ok (conc hd tl)
-  | a0, v0 -> eval v0 >>= push a0
+  | a0, v0 -> eval ~closure v0 >>= push ~closure a0
 
-and exec values = function
-  | Function (_, fn) -> fn values
-  | Cons (Nil, Cons (Cons _ as body, Nil)) ->
-    eval body
-  | Cons (Cons _ as args, Cons (Cons _ as body, Nil)) ->
-    bind args values >>= fun s ->
-    eval body
+and exec ~closure values = function
+  | Internal (_, fn) -> fn closure values
+  | Function (_, Nil, body, closure) -> eval ~closure body
+  | Function (_, args, body, closure) ->
+    bind ~closure args values >>= fun s ->
+    eval ~closure body
     |> fun r -> pop s;
     r
   | (Number _ as v)
   | (String _ as v) -> Ok (Cons (v, values))
   | l -> Error.cannot_execute l
 
-and resolve = function
-  | Symbol s -> Ok (World.get s)
+and resolve ~closure = function
+  | Symbol s -> Ok (World.get ~closure s)
   | l -> Ok l
 
-and eval t =
+and eval ~closure t =
   let eval_ = function
-    | Cons (a, b) -> eval a >>= exec b
-    | l -> resolve l
+    | Cons (a, b) -> eval ~closure a >>= exec ~closure b
+    | l -> resolve ~closure l
   in
   Trace.enter t >>= eval_ |> Trace.leave

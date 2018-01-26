@@ -21,11 +21,11 @@ open Utils
 let name = "fun?"
 
 let funp = function
-  | Function _ -> Ok T
+  | Internal _ -> Ok T
   | _ -> Ok Nil
 
-let run = function
+let run closure = function
   | Cons (a, Nil)
-  | a -> Interpreter.eval a >>= funp
+  | a -> Interpreter.eval ~closure a >>= funp
 
 let hook = (name, run)

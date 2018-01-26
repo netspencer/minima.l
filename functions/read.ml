@@ -39,7 +39,7 @@ let parse lexbuf =
   | Some value -> Ok value
   | None -> Ok Nil
 
-let run = function
+let run _ = function
   | Nil -> !Interpreter.in_channel |> fun (_, _, buf) -> parse buf
   | t -> Error.undefined t
 
