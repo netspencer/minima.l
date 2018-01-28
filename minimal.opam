@@ -19,6 +19,7 @@ build-test: [
 depends: [
   "jbuilder" { build                 }
   "menhir"   { build & >= "20170418" }
+  "sedlex"   { build & >= "1.99.4"   }
 ]
 
 available: ocaml-version >= "4.05.0"

@@ -17,7 +17,7 @@
 open Machine
 open Grammar
 
-let name = "\\"
+let name = "λ"
 
 module Args = Set.Make(String)
 

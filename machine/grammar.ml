@@ -21,7 +21,7 @@ let rec to_string = function
   | Nil                   -> "NIL"
   | Any                   -> "_"
   | Internal (s, _)       -> "<" ^ s ^ ">"
-  | Function (s, a, b, _) -> "(" ^ (to_string a) ^ (to_string b) ^ ")"
+  | Function (s, a, b, _) -> "[" ^ (to_string a) ^ (to_string b) ^ "]"
   | Symbol s              -> Printf.sprintf "%s" s
   | Number n              -> Printf.sprintf "%Ld" n
   | String s              -> Printf.sprintf "\"%s\"" s

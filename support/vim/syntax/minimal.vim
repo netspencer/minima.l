@@ -20,11 +20,10 @@ syn match  MinimalComment     /#.*$/
 syn match  MinimalNumber      /\v<[-+]?\d+(\.\d+)?>/
 syn region MinimalString      start=/"/ skip=/\\\\\|\\"/ end=/"/
 syn match  MinimalParentheses /[()\[\]]/
-syn match  MinimalBackslash   /\\/
 
 syn keyword MinimalSpecial  NIL T _ @ @@ @@@
 
-syn keyword MinimalFuncs case ? ?: ?! whil
+syn keyword MinimalFuncs case ? ?: ?! while λ
 syn keyword MinimalFuncs + - * / = <> < <= > >= and or not
 syn keyword MinimalFuncs prog nil? fun? lst? num? str?
 syn keyword MinimalFuncs car cdr chars conc cons def env eval join let list load
@@ -36,19 +35,18 @@ syn keyword MinimalDebug trace closure
 hi default link MinimalComment Comment
 hi default link MinimalCommentRegion Comment
 
-hi default link MinimalBackslash Function
-hi default link MinimalNumber    Number
-hi default link MinimalString    String
-hi default link MinimalSpecial   Constant
-hi default link MinimalCond      Conditional
-hi default link MinimalFuncs     Function
-hi default link MinimalOperator  Operator
-hi default link MinimalDebug     Type
+hi default link MinimalNumber   Number
+hi default link MinimalString   String
+hi default link MinimalSpecial  Constant
+hi default link MinimalCond     Conditional
+hi default link MinimalFuncs    Function
+hi default link MinimalOperator Operator
+hi default link MinimalDebug    Type
 
 set lisp
 
 set lispwords=
-set lispwords+=prog,case,while,?,?:,?!,+,-,*,/,\,=,<>,<,<=,>,>=
+set lispwords+=prog,case,while,λ,?,?:,?!,+,-,*,/,\,=,<>,<,<=,>,>=
 set lispwords+=fun?,lst?,num?,str?
 set lispwords+=car,cdr,chars,conc,cons,def,env,eval,join,let,list,load
 set lispwords+=flush,in,line,out,prin,prinl,print,println,read

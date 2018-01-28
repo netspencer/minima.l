@@ -26,12 +26,9 @@ let print_position outx lexbuf =
   Printf.fprintf outx "%d:%d" pos.pos_lnum (pos.pos_cnum - pos.pos_bol + 1)
 
 let parse_with_error lexbuf =
-  try Parser.entry Lexer.read lexbuf with
-  | SyntaxError msg ->
-    Printf.printf "%a: %s\n" print_position lexbuf msg;
-    None
-  | Parser.Error ->
-    Printf.printf "%a: syntax error\n" print_position lexbuf;
+  try Syntax.parse Lexer.read Parser.entry lexbuf with
+  | Syntax.ParseError e ->
+    Printf.printf "%s\n" (Syntax.string_of_ParseError e);
     None
 
 let parse lexbuf =

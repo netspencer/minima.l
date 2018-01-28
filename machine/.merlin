@@ -1,3 +1,7 @@
 B ../_build/default/machine
-FLG -open Machine -g
+FLG -open Machine -w -40
+FLG -ppx '/Users/xguerin/Workspace/minima.l/_build/default/.ppx/sedlex.ppx/ppx.exe --as-ppx --cookie '\''library-name="machine"'\'''
+PKG gen
+PKG menhirlib
+PKG sedlex
 PKG unix

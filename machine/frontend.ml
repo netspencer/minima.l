@@ -24,12 +24,9 @@ let print_position outx lexbuf =
   Printf.fprintf outx "%d:%d" pos.pos_lnum (pos.pos_cnum - pos.pos_bol + 1)
 
 let parse_with_error lexbuf =
-  try Parser.entry Lexer.read lexbuf with
-  | SyntaxError msg ->
-    Printf.printf "%a: %s\n" print_position lexbuf msg;
-    None
-  | Parser.Error ->
-    Printf.printf "%a: syntax error\n" print_position lexbuf;
+  try Syntax.parse Lexer.read Parser.entry lexbuf with
+  | Syntax.ParseError e ->
+    Printf.printf "%s\n" (Syntax.string_of_ParseError e);
     None
 
 let eval l =
@@ -47,7 +44,8 @@ let repl () =
     try
       Printf.printf ": ";
       read_line ()
-      |> Lexing.from_string
+      |> Sedlexing.Utf8.from_string
+      |> Syntax.create_lexbuf
       |> parse
       |> function
       | Nil -> live := false
@@ -96,8 +94,8 @@ let load filename =
   try
     let dsc = Unix.openfile filename [ Unix.O_RDONLY ] 0o640 in
     let inx = Unix.in_channel_of_descr dsc in
-    let buf = Lexing.from_channel inx in
-    buf.lex_curr_p <- { buf.lex_curr_p with pos_fname = filename };
+    let slx = Sedlexing.Utf8.from_channel inx in
+    let buf = Syntax.create_lexbuf ~file:filename slx in
     let res = load_all buf in
     Unix.close dsc;
     Ok res

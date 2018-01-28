@@ -1,6 +1,9 @@
 B ../_build/default/functions
 B ../_build/default/machine
 FLG -open Functions -g
+PKG gen
+PKG menhirlib
+PKG sedlex
 PKG str
 PKG unix
 S ../machine

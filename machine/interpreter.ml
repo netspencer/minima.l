@@ -27,7 +27,7 @@ exception Throw of Grammar.t
  * Global references.
  *)
 
-let in_channel = ref ("stdin", stdin, Lexing.from_channel stdin)
+let in_channel = ref ("stdin", stdin, Syntax.create_lexbuf (Sedlexing.Utf8.from_channel stdin))
 let out_channel = ref ("stdout", stdout)
 
 (*

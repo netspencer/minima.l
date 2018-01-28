@@ -16,7 +16,6 @@
 
 open Machine
 open Grammar
-open Lexing
 open Utils
 
 let name = "in"
@@ -24,8 +23,8 @@ let name = "in"
 let process ~closure = function
   | Nil, Cons (prg, Nil) ->
     let old = !Interpreter.in_channel in
-    let buf = Lexing.from_channel stdin in
-    buf.lex_curr_p <- { buf.lex_curr_p with pos_fname = "stdin" };
+    let slx = Sedlexing.Utf8.from_channel stdin in
+    let buf = Syntax.create_lexbuf slx in
     Interpreter.in_channel := ("stdin", stdin, buf);
     begin try
         let res = Interpreter.eval ~closure prg in
@@ -40,8 +39,8 @@ let process ~closure = function
       let old = !Interpreter.in_channel in
       let dsc = Unix.openfile filename [ Unix.O_RDONLY ] 0o440 in
       let chn = Unix.in_channel_of_descr dsc in
-      let buf = Lexing.from_channel chn in
-      buf.lex_curr_p <- { buf.lex_curr_p with pos_fname = filename };
+      let slx = Sedlexing.Utf8.from_channel chn in
+      let buf = Syntax.create_lexbuf ~file:filename slx in
       Interpreter.in_channel := (filename, chn, buf);
       begin try
           let res = Interpreter.eval ~closure prg in

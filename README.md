@@ -1,6 +1,6 @@
 # minima.l
 
-Minimal `lisp` interpreter in about 250 lines of OCaml code.
+Minimal `lisp` interpreter in about 350 lines of OCaml code.
 **Heavily** inspired by [Picolisp](https://picolisp.com).
 
 ## Example
@@ -22,6 +22,8 @@ Minimal `lisp` interpreter in about 250 lines of OCaml code.
 ```
 
 ## Language
+
+The encoding is expected to be UTF-8.
 
 ```lisp
 # This is a comment
@@ -64,14 +66,14 @@ displayed as `<fn>`:
 
 ### Lambda functions
 
-Lambda functions are defined using the `\` keyword. Invocation of `\` is
-similar to `def`:
+Lambda functions are defined using the `λ` keyword (codepoint 0x3BB).
+Invocation of `λ` is similar to `def`:
 
 ```lisp
-: ((\(X Y)(+ X Y)) 1 1)
+: ((λ (X Y)(+ X Y)) 1 1)
 -> 2
 
-: ((\x (map (\(n)(+ n 1)) x)) '(1 2 3 4))
+: ((λ x (map (λ (n)(+ n 1)) x)) '(1 2 3 4))
 -> (2 3 4 5)
 ```
 
@@ -84,7 +86,7 @@ situation like the `filter` function:
 ```lisp
 (def filter (fun lst)
   (foldr
-    (\(e acc) (?: (fun e) acc (cons e acc)))
+    (λ (e acc) (?: (fun e) acc (cons e acc)))
     lst NIL))
 ```
 
@@ -110,9 +112,9 @@ deconstruction. For instance, with `def`:
 Or with a lambda:
 
 ```lisp
-: (setq data (\("hello" . 1) ("world" . 2)))
+: (setq data '(("hello" . 1) ("world" . 2)))
 -> (("hello" . 1) ("world" . 2))
-: (foldl (\(acc (_ . v))(+ acc v)) 0 data)
+: (foldl (λ (acc (_ . v))(+ acc v)) 0 data)
 -> 3
 ```
 
@@ -422,14 +424,14 @@ arity:
 
 ```lisp
 : (setq lambdas
-    '(("inc" `(\(x)(+ x 2)))
-      ("add" `(\(x y)(+ x y)))
-      ("acc" `(\(l)(foldl + 10 l)))
+    '(("inc" `(λ (x) (+ x 2)))
+      ("add" `(λ (x y) (+ x y)))
+      ("acc" `(λ (l) (foldl + 10 l)))
       ))
 -> (("inc" ((x) (+ x 2))) ("add" ((x y) (+ x y))) ("acc" ((l) (foldl + 10 l))))
 
 : (def filter (lamdas)
-    (foldr (\((_ fn) acc)
+    (foldr (λ ((_ fn) acc)
              (case fn
                (((_  ) _) (cons @ acc))
                (((_ _) _) acc)
@@ -441,9 +443,9 @@ arity:
 -> filter
 
 : (filter lambdas)
--> (((x) (+ x 2)) ((l) (foldl + 10 l)))
+-> ([(x) (+ x 2)] [(l) (foldl + 10 l)])
 
-: (map (\(l)(l 1)) (filter lambdas))
+: (map (λ (l)(l 1)) (filter lambdas))
 -> (3 11)
 ```
 
@@ -647,7 +649,7 @@ appended to it.
 -> (("Name" "Age" "City") ("Alex" "32" "London") ("John" "17" "Chicago") ("Marc" "25" "Lyon") ("Sophie" "29" "Nice"))
 
 : (out "result.csv"
-    (iter (\(t)(prinl (join ", " t))) DATA))
+    (iter (λ (t)(prinl (join ", " t))) DATA))
 -> ("Sophie" "29" "Nice")
 ```
 

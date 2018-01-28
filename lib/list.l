@@ -60,23 +60,23 @@
 (def filter (fun lst)
   "Scan lst and remove any element for which fun returns T."
   (foldr
-    (\(e acc) (?: (fun e) acc (cons e acc)))
+    (λ (e acc) (?: (fun e) acc (cons e acc)))
     lst NIL))
 
 (def flatten (lst)
   "Flatten multi-layer list lst."
   (?! (nil? lst)
       (?: (lst? lst)
-          (foldr (\(lst acc)(conc (flatten lst) acc)) lst NIL)
+          (foldr (λ (lst acc) (conc (flatten lst) acc)) lst NIL)
           (list lst))))
 
 (def rev (lst)
   "Return the reverse of lst."
-  (foldl (\(acc e)(cons e acc)) NIL lst))
+  (foldl (λ (acc e) (cons e acc)) NIL lst))
 
 (def len (lst)
   "Return the length of list lst"
-  (foldl (\(acc _)(+ acc 1)) 0 lst))
+  (foldl (λ (acc _) (+ acc 1)) 0 lst))
 
 (def assoc (key lst)
   "Return the value for key in the associative list lst."

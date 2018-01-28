@@ -6,4 +6,4 @@
              ))
 
 (out "result.csv"
-  (iter '((t)(prinl (join ", " t))) DATA))
+  (iter (λ (t) (prinl (join ", " t))) DATA))
