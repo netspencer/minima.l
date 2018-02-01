@@ -44,6 +44,7 @@ and read_str str lexbuf =
   let buf = lexbuf.stream in
   match%sedlex buf with
   | '"'        -> Buffer.contents str
+  | '\\', '"'  -> Buffer.add_char str '"'   ; read_str str lexbuf
   | '\\', '/'  -> Buffer.add_char str '/'   ; read_str str lexbuf
   | '\\', '\\' -> Buffer.add_char str '\\'  ; read_str str lexbuf
   | '\\', 'b'  -> Buffer.add_char str '\b'  ; read_str str lexbuf
