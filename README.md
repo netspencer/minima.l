@@ -35,19 +35,20 @@ The encoding is expected to be UTF-8.
 * Number: positive and negative 64-bit integer
 * Symbol: character string
 * String: `"`-delimited character string
-* Function: internal function definition, inaccessible to the user
+* Function: the function type as defined by `def` or `λ`
+* Internal: internal function definition, inaccessible to the user
 
 ### Constants
 
+* `T`: stands for `true`
 * `NIL`: the empty list, also stands for `false`
 * `_`: wildcard, used to disregard patterns during deconstruction
-* `T`: stands for `true`
 
 ### Symbols
 
-Symbols are used by the interpreter as keys to address `lisp` types in mappings
-such as `def` or `setq`. They are also used to map function arguments in `def`
-and in lambda definitions.
+The interpreter uses symbols to address `lisp` types. Symbols can be created or
+altered using the `def` and `setq` functions. Internals are pre-mapped into the
+symbol world and can be overridden by the user.
 
 ### Evaluation
 
@@ -56,8 +57,8 @@ and in lambda definitions.
 * Lists evaluate as function call
 
 When a symbol is evaluated, its value is returned. In the case of internal
-functions (`car`, `cdr`, ...), the special `Function` type is returned and
-displayed as `<fn>`:
+functions (`car`, `cdr`, ...), the special `Internal` type is returned and
+displayed as `<internal>`:
 
 ```lisp
 : car
@@ -79,27 +80,13 @@ Invocation of `λ` is similar to `def`:
 
 ### Closures
 
-Function definitions carry a symbol closure. The closure contain the value of
-the symbol as they were define at the call site. This is very useful for
-situation like the `filter` function:
-
-```lisp
-(def filter (fun lst)
-  (foldr
-    (λ (e acc) (?: (fun e) acc (cons e acc)))
-    lst NIL))
-```
-
-In the code above, `filter` calls `foldr` with a lambda function that refers to
-one of its argument, `fun`. However, `fun` is also used as one of `foldr`
-arguments.  Without closure, the late evaluation of the lambda function in
-`filter` would resolve `fun` as itself and the execution would end up in a stack
-overflow. With the closure, `fun` resolves to the value passed to `filter` and
-the execution proceeeds as expected.
+Function definitions carry a symbol closure. The closure contains the value of
+the function's symbols *not present in the argument list* such as they were
+resolved at the definition site. 
 
 ### Currying
 
-Thanks to the support for closures, currying is also supported:
+Function can be curried:
 
 ```lisp
 : ((λ (a b) (+ a b)) 1)
@@ -176,6 +163,16 @@ and is ignored by the interpreter.
 ```lisp
 : (def add (X Y) (+ X Y))
 -> add
+```
+
+Function defined with the `def` keyword are simply lambda functions assigned to
+symbol. Indeed, the following expression are strictly equivalent:
+
+```lisp
+: (def add (a b) (+ a b))
+-> add
+: (setq add (λ (a b) (+ a b)))
+-> (λ (a b) (+ a b))
 ```
 
 ##### eval
@@ -785,6 +782,26 @@ previous value.
 ```
 
 Terminate the top-level evaluation.
+
+### Debug
+
+##### closure
+
+Print the closure of a function definition.
+
+
+```lisp
+: (def add (a b) (+ a b))
+-> add
+: (setq +1 (add 1))
+-> (add (b) (+ a b))
+: (closure +1)
+-> (("a" . 1) ("+" . <+>))
+```
+
+##### trace
+
+Toggle tracing.
 
 ## License
 
