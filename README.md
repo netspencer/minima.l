@@ -626,6 +626,20 @@ evaluates to `NIL` instead of a string, individual characters are returned.
 
 Flush the current output channel.
 
+##### json
+
+```lisp
+(json 'sym 'str)
+```
+
+Parse JSON input. `sym` can either be `file` or `string`. This function piggies
+back on Yojson.
+
+```lisp
+: (json 'string "{ \"hello\": \"world\" }")
+-> (("hello" . "world"))
+```
+
 ##### in
 
 ```lisp

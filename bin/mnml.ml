@@ -39,6 +39,7 @@ let functions = [
   Functions.If.hook;
   Functions.In.hook;
   Functions.Join.hook;
+  Functions.Json.hook;
   Functions.Lambda.hook;
   Functions.Le.hook;
   Functions.Let.hook;

@@ -1,9 +1,12 @@
 B ../_build/default/functions
 B ../_build/default/machine
 FLG -open Functions -g
+PKG biniou
+PKG easy-format
 PKG gen
 PKG menhirlib
 PKG sedlex
 PKG str
 PKG unix
+PKG yojson
 S ../machine

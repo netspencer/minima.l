@@ -3,5 +3,5 @@
 (library
  ((name      functions)
   (flags     (-g))
-  (libraries (machine str))
+  (libraries (machine str yojson))
   ))
