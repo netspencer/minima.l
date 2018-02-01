@@ -21,7 +21,7 @@ open Utils
 let name = "eval"
 
 let run closure = function
-  | Cons (a, Nil)  -> Interpreter.eval ~closure a >>= Interpreter.eval ~closure
+  | Cons (a, Nil)  -> Interpreter.eval closure a >>= Interpreter.eval closure
   | t -> Error.undefined t
 
 let hook = (name, run)

@@ -20,18 +20,18 @@ open Utils
 
 let name = "while"
 
-let rec proc ~closure cnd prg last =
-  Interpreter.eval ~closure cnd >>= function
+let rec proc closure cnd prg last =
+  Interpreter.eval closure cnd >>= function
   | Nil -> Ok last
   | t ->
-    let old = World.get ~closure:Closure.empty "@" in
+    let old = World.get Closure.empty "@" in
     World.set "@" t;
-    Interpreter.eval ~closure prg >>= fun res ->
+    Interpreter.eval closure prg >>= fun res ->
     World.set "@" old;
-    proc ~closure cnd prg res
+    proc closure cnd prg res
 
 let run closure = function
-  | Cons (a, Cons (b, Nil)) -> proc ~closure a b Nil
+  | Cons (a, Cons (b, Nil)) -> proc closure a b Nil
   | t -> Error.undefined t
 
 let hook = (name, run)

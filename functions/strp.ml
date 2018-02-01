@@ -26,6 +26,6 @@ let strp = function
 
 let run closure = function
   | Cons (a, Nil)
-  | a -> Interpreter.eval ~closure a >>= strp
+  | a -> Interpreter.eval closure a >>= strp
 
 let hook = (name, run)

@@ -27,27 +27,27 @@ let rec define args set =
   | Cons (a, b) -> set |> define a |> define b
   | _ -> set
 
-let rec collect ~closure name args body c =
+let rec collect closure name args body c =
   match body with
   | Symbol s when String.compare name s <> 0 ->
     begin match Args.find_opt s args with
       | Some s -> c
-      | None -> Closure.add s (World.get ~closure s) c
+      | None -> Closure.add s (World.get closure s) c
     end
   | Cons (a, b) ->
-    c |> collect ~closure name args a |> collect ~closure name args b
+    c |> collect closure name args a |> collect closure name args b
   | _ -> c
 
-let mkfun ~closure name args body =
+let mkfun closure name args body =
   let limits = define args Args.empty in
-  let closure = collect ~closure name limits body Closure.empty in
+  let closure = collect closure name limits body Closure.empty in
   Function (name, args, body, closure)
 
 let rec run closure = function
   | Cons (Nil, Cons (Cons _ as body, Nil)) ->
-    Ok (mkfun ~closure "\\" Nil body)
+    Ok (mkfun closure "λ" Nil body)
   | Cons (Cons _ as args, Cons (Cons _ as body, Nil)) ->
-    Ok (mkfun ~closure "\\" args body)
+    Ok (mkfun closure "λ" args body)
   | t -> Error.undefined t
 
 let hook = (name, run)

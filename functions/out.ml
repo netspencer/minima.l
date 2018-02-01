@@ -22,14 +22,14 @@ let name = "out"
 
 let regex = Str.regexp "^\\+.*$"
 
-let in_file ~closure mode prg filename =
+let in_file closure mode prg filename =
   try
     let old = !Interpreter.out_channel in
     let dsc = Unix.openfile filename mode 0o640 in
     let chn = Unix.out_channel_of_descr dsc in
     Interpreter.out_channel := (filename, chn);
     begin try
-        let res = Interpreter.eval ~closure prg in
+        let res = Interpreter.eval closure prg in
         Interpreter.out_channel := old;
         flush chn;
         Unix.close dsc;
@@ -44,12 +44,12 @@ let in_file ~closure mode prg filename =
     Printf.printf "Exception !!\n";
     Ok Nil
 
-let process ~closure = function
+let process closure = function
   | Nil, Cons (prg, Nil) ->
     let old = !Interpreter.out_channel in
     Interpreter.out_channel := ("stdout", stdout);
     begin try
-        let res = Interpreter.eval ~closure prg in
+        let res = Interpreter.eval closure prg in
         Interpreter.out_channel := old;
         flush stdout;
         res
@@ -60,14 +60,14 @@ let process ~closure = function
     end
   | String fn, Cons (prg, Nil) when Str.string_match regex fn 0 && String.length fn > 1 ->
     String.sub fn 1 ((String.length fn) - 1)
-    |> in_file ~closure [ Unix.O_WRONLY; Unix.O_APPEND ] prg
+    |> in_file closure [ Unix.O_WRONLY; Unix.O_APPEND ] prg
   | String fn, Cons (prg, Nil) when String.length fn > 0 ->
-    in_file ~closure [ Unix.O_WRONLY; Unix.O_CREAT; Unix.O_TRUNC ] prg fn
+    in_file closure [ Unix.O_WRONLY; Unix.O_CREAT; Unix.O_TRUNC ] prg fn
   | a, b -> Error.undefined (Cons (a, b))
 
 let run closure = function
   | Cons (fn, prg) ->
-    Interpreter.eval ~closure fn >>= fun fn -> process ~closure (fn, prg)
+    Interpreter.eval closure fn >>= fun fn -> process closure (fn, prg)
   | t -> Error.undefined t
 
 let hook = (name, run)

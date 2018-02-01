@@ -26,6 +26,6 @@ let nump = function
 
 let run closure = function
   | Cons (a, Nil)
-  | a -> Interpreter.eval ~closure a >>= nump
+  | a -> Interpreter.eval closure a >>= nump
 
 let hook = (name, run)

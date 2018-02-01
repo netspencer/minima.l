@@ -27,14 +27,14 @@ let name = "list"
 
 let rec run closure = function
   | Cons (a, Nil) ->
-    Interpreter.eval a ~closure >>= fun a ->
+    Interpreter.eval closure a >>= fun a ->
     Ok (Cons (a, Nil))
   | Cons (a, b) ->
-    Interpreter.eval ~closure a >>= fun a ->
+    Interpreter.eval closure a >>= fun a ->
     run closure b >>= fun b ->
     Ok (Cons (a, b))
   | t ->
-    Interpreter.eval ~closure t >>= fun t ->
+    Interpreter.eval closure t >>= fun t ->
     Ok (Cons (t, Nil))
 
 let hook = (name, run)

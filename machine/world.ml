@@ -26,7 +26,7 @@ let set sym t =
   Trace.bind sym t;
   Hashtbl.add world sym t
 
-let get ~closure sym =
+let get closure sym =
   match Closure.find_opt sym closure with
   | Some v -> v
   | None -> match Hashtbl.find_opt world sym with
@@ -34,7 +34,7 @@ let get ~closure sym =
     | None   -> Nil
 
 let shift v =
-  get ~closure:Closure.empty "@@" |> set "@@@";
-  get ~closure:Closure.empty "@"  |> set "@@";
-  v                               |> set "@";
+  get Closure.empty "@@" |> set "@@@";
+  get Closure.empty "@"  |> set "@@";
+  v                      |> set "@";
   Ok v

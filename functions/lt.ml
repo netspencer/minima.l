@@ -21,9 +21,20 @@ open Utils
 let name = "<"
 
 let run closure = function
+  | Cons (a, Nil) ->
+    Interpreter.eval closure a >>=
+    begin function
+      | Number _ as n ->
+        let body = Cons (Symbol "<", Cons (n, Cons (Symbol "a", Nil)))
+        and args = Cons (Symbol "a", Nil)
+        in
+        Cons (Symbol "λ", Cons (args, Cons (body, Nil)))
+        |> Interpreter.eval closure
+      | a -> Error.undefined a
+    end
   | Cons (a, Cons (b, Nil)) ->
-    Interpreter.eval ~closure a >>= fun a ->
-    Interpreter.eval ~closure b >>= fun b ->
+    Interpreter.eval closure a >>= fun a ->
+    Interpreter.eval closure b >>= fun b ->
     begin match a, b with
       | Number i, Number j when i < j -> Ok T
       | Number i, Number j            -> Ok Nil

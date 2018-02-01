@@ -36,11 +36,11 @@ let setenv = function
 
 let run closure = function
   | Cons (a, Nil) ->
-    Interpreter.eval ~closure a >>= fun a ->
+    Interpreter.eval closure a >>= fun a ->
     getenv a
   | Cons (a, Cons (b, Nil)) ->
-    Interpreter.eval ~closure a >>= fun a ->
-    Interpreter.eval ~closure b >>= fun b ->
+    Interpreter.eval closure a >>= fun a ->
+    Interpreter.eval closure b >>= fun b ->
     getenv a                    >>= fun c ->
     setenv (a, b)               >>= fun _ ->
     Ok c

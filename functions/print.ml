@@ -22,23 +22,23 @@ open Utils
 
 let name = "print"
 
-let rec print ~closure chan t =
+let rec print closure chan t =
   match t with
   | Nil -> Ok t
   | Cons (a, Nil) ->
-    Interpreter.eval ~closure a >>= fun r ->
+    Interpreter.eval closure a >>= fun r ->
     Printf.fprintf chan "%s" (Grammar.to_string r);
     Ok r
   | Cons (a, b) ->
-    Interpreter.eval ~closure a >>= fun r ->
+    Interpreter.eval closure a >>= fun r ->
     Printf.fprintf chan "%s " (Grammar.to_string r);
-    print ~closure chan b
+    print closure chan b
   | _ ->
-    Interpreter.eval ~closure t >>= fun r ->
+    Interpreter.eval closure t >>= fun r ->
     Printf.fprintf chan "%s" (Grammar.to_string r);
     Ok r
 
 let run closure t =
-  !Interpreter.out_channel |> fun (_, chan) -> print ~closure chan t
+  !Interpreter.out_channel |> fun (_, chan) -> print closure chan t
 
 let hook = (name, run)

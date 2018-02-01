@@ -20,19 +20,19 @@ open Utils
 
 let name = "case"
 
-let rec proc ~closure m0 = function
+let rec proc closure m0 = function
   | Cons (Cons (m1, prg), _) when Equ.compare (m0, m1) = Ok T ->
     World.shift m0 |> ignore;
-    Interpreter.eval ~closure prg
+    Interpreter.eval closure prg
   | Cons (Cons (Any, prg), _) ->
-    Interpreter.eval ~closure prg
+    Interpreter.eval closure prg
   | Cons (_, rest) ->
-    proc ~closure m0 rest
+    proc closure m0 rest
   | _ -> Ok Nil
 
 let run closure = function
   | Cons (m0, clauses) ->
-    Interpreter.eval ~closure m0 >>= fun m0 -> proc ~closure m0 clauses
+    Interpreter.eval closure m0 >>= fun m0 -> proc closure m0 clauses
   | t -> Error.undefined t
 
 let hook = (name, run)

@@ -22,10 +22,10 @@ let name = "?:"
 
 let run closure = function
   | Cons (a, Cons (b, Cons (c, Nil))) ->
-    Interpreter.eval ~closure a >>= fun a ->
+    Interpreter.eval closure a >>= fun a ->
     begin match a with
-      | T   -> Interpreter.eval ~closure b
-      | Nil -> Interpreter.eval ~closure c
+      | T   -> Interpreter.eval closure b
+      | Nil -> Interpreter.eval closure c
       | t   -> Error.undefined t
     end
   | t -> Error.undefined t

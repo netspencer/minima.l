@@ -43,6 +43,6 @@ let load = function
 
 let run closure = function
   | Cons (a, Nil)
-  | a -> Interpreter.eval ~closure a >>= fun a -> load a
+  | a -> Interpreter.eval closure a >>= fun a -> load a
 
 let hook = (name, run)

@@ -21,10 +21,21 @@ open Utils
 let name = "or"
 
 let run closure = function
+  | Cons (a, Nil) ->
+    Interpreter.eval closure a >>=
+    begin function
+      | v when v = T || v = Nil ->
+        let body = Cons (Symbol "or", Cons (v, Cons (Symbol "a", Nil)))
+        and args = Cons (Symbol "a", Nil)
+        in
+        Cons (Symbol "λ", Cons (args, Cons (body, Nil)))
+        |> Interpreter.eval closure
+      | a -> Error.undefined a
+    end
   | Cons (a, Cons (b, Nil)) ->
-    begin Interpreter.eval ~closure a >>= function
+    begin Interpreter.eval closure a >>= function
     | T   -> Ok T
-    | Nil -> begin Interpreter.eval ~closure b >>= function
+    | Nil -> begin Interpreter.eval closure b >>= function
       | T   -> Ok T
       | Nil ->  Ok Nil
       | t -> Error.undefined t

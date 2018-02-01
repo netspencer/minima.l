@@ -22,11 +22,11 @@ let name = "setq"
 
 let rec run closure = function
   | Cons (Symbol a, Cons (b, Nil)) ->
-    Interpreter.eval ~closure b >>= fun ev ->
+    Interpreter.eval closure b >>= fun ev ->
     World.set a ev;
     Ok ev
   | Cons (Symbol a, Cons (b, c)) ->
-    Interpreter.eval ~closure b >>= fun ev ->
+    Interpreter.eval closure b >>= fun ev ->
     World.set a ev;
     run closure c
   | t -> Error.undefined t

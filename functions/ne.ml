@@ -27,9 +27,16 @@ let compare (a, b) =
   | t   -> Error.undefined t
 
 let run closure = function
+  | Cons (a, Nil) ->
+    Interpreter.eval closure a >>= fun a ->
+    let body = Cons (Symbol "<>", Cons (a, Cons (Symbol "a", Nil)))
+    and args = Cons (Symbol "a", Nil)
+    in
+    Cons (Symbol "λ", Cons (args, Cons (body, Nil)))
+    |> Interpreter.eval closure
   | Cons (a, Cons (b, Nil)) ->
-    Interpreter.eval ~closure a >>= fun a ->
-    Interpreter.eval ~closure b >>= fun b ->
+    Interpreter.eval closure a >>= fun a ->
+    Interpreter.eval closure b >>= fun b ->
     compare (a, b)
   | t -> Error.undefined t
 

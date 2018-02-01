@@ -32,10 +32,10 @@ let toggle () =
   enabled := not !enabled;
   if !enabled then Ok T else Ok Nil
 
-let enter t =
+let enter c t  =
   if !enabled then begin
     for i = 0 to !level - 1 do Printf.printf "| "; done;
-    print "⦿ " t;
+    Printf.printf "⦿  %s —  %s\n" (to_string t) (to_string (Utils.closure_to_list c));
   end;
   level := !level + 1;
   Ok t

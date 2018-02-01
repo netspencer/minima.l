@@ -22,11 +22,11 @@ let name = "conc"
 
 let rec run closure = function
   | Nil -> Ok Nil
-  | Cons (a, Nil) -> Interpreter.eval ~closure a
+  | Cons (a, Nil) -> Interpreter.eval closure a
   | Cons (a, rest) ->
-    Interpreter.eval ~closure a >>= fun a ->
+    Interpreter.eval closure a >>= fun a ->
     run closure rest >>= fun rest ->
     Ok (Interpreter.conc rest a)
-  | a -> Interpreter.eval ~closure a
+  | a -> Interpreter.eval closure a
 
 let hook = (name, run)

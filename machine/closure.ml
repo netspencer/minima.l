@@ -22,3 +22,11 @@ let empty = Map.empty
 let add = Map.add
 let find_opt = Map.find_opt
 let fold = Map.fold
+
+let merge c0 c1 =
+  Map.merge (fun key a b ->
+      match a, b with
+      | Some a, Some b -> Some b
+      | None  , b      -> b
+      | a     , None   -> a)
+    c0 c1

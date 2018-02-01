@@ -24,7 +24,7 @@ let name = "println"
 
 let run closure t =
   !Interpreter.out_channel
-  |> fun (_, chan) -> Print.print ~closure chan t >>= fun r ->
+  |> fun (_, chan) -> Print.print closure chan t >>= fun r ->
   Printf.fprintf chan "\n";
   Ok r
 

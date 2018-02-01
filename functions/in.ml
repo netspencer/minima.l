@@ -20,14 +20,14 @@ open Utils
 
 let name = "in"
 
-let process ~closure = function
+let process closure = function
   | Nil, Cons (prg, Nil) ->
     let old = !Interpreter.in_channel in
     let slx = Sedlexing.Utf8.from_channel stdin in
     let buf = Syntax.create_lexbuf slx in
     Interpreter.in_channel := ("stdin", stdin, buf);
     begin try
-        let res = Interpreter.eval ~closure prg in
+        let res = Interpreter.eval closure prg in
         Interpreter.in_channel := old;
         res
       with e ->
@@ -43,7 +43,7 @@ let process ~closure = function
       let buf = Syntax.create_lexbuf ~file:filename slx in
       Interpreter.in_channel := (filename, chn, buf);
       begin try
-          let res = Interpreter.eval ~closure prg in
+          let res = Interpreter.eval closure prg in
           Interpreter.in_channel := old;
           Unix.close dsc;
           res
@@ -58,7 +58,7 @@ let process ~closure = function
   | a, b -> Error.undefined (Cons (a, b))
 
 let run closure = function
-  | Cons (fn, prg) -> Interpreter.eval ~closure fn >>= fun fn -> process ~closure (fn, prg)
+  | Cons (fn, prg) -> Interpreter.eval closure fn >>= fun fn -> process closure (fn, prg)
   | t -> Error.undefined t
 
 let hook = (name, run)

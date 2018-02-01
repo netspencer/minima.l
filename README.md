@@ -97,6 +97,30 @@ arguments.  Without closure, the late evaluation of the lambda function in
 overflow. With the closure, `fun` resolves to the value passed to `filter` and
 the execution proceeeds as expected.
 
+### Currying
+
+Thanks to the support for closures, currying is also supported:
+
+```lisp
+: ((λ (a b) (+ a b)) 1)
+-> (λ (b) (+ a b))
+: (@ 10)
+-> 11
+```
+
+Curryring is available for all user-defined functions as well as for some internal
+functions such as '+', '-', 'and', 'cons', and so on. Many shortcuts can
+therefore been defined as such:
+
+```lisp
+: (setq =0 (= 0))
+-> (λ (a) (= 0 a))
+: (=0 0)
+-> T
+: (=0 1)
+-> Nil
+```
+
 ### Argument assignation
 
 Assignation of arguments in either `def` of `lamda` functions support
@@ -184,7 +208,7 @@ For each element in the bind list, the `cdr` is evaluated and bound to its `car`
 using the argument assignation process described above.
 
 ```lisp
-: (let ((a 1)(b 2)) (println a b))
+: (let ((a . 1)(b . 2)) (println a b))
 1
 2
 -> 2

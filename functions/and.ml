@@ -21,15 +21,26 @@ open Utils
 let name = "and"
 
 let run closure = function
+  | Cons (a, Nil) ->
+    Interpreter.eval closure a >>=
+    begin function
+      | v when v = T || v = Nil ->
+        let body = Cons (Symbol "and", Cons (v, Cons (Symbol "a", Nil)))
+        and args = Cons (Symbol "a", Nil)
+        in
+        Cons (Symbol "λ", Cons (args, Cons (body, Nil)))
+        |> Interpreter.eval closure
+      | a -> Error.undefined a
+    end
   | Cons (a, Cons (b, Nil)) ->
-    Interpreter.eval ~closure a >>= fun a ->
-    Interpreter.eval ~closure b >>= fun b ->
+    Interpreter.eval closure a >>= fun a ->
+    Interpreter.eval closure b >>= fun b ->
     begin match a, b with
       | T,   T   -> Ok T
       | T,   Nil -> Ok Nil
       | Nil, T   -> Ok Nil
       | Nil, Nil -> Ok Nil
-      | a, b     -> Error.undefined (Cons (a, b))
+      | a, b     -> Error.undefined (Cons (a, Cons (b, Nil)))
     end
   | t -> Error.undefined t
 

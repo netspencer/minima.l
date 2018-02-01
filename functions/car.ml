@@ -23,7 +23,7 @@ let name = "car"
 let run closure = function
   | Nil -> Ok Nil
   | Cons (a, Nil) ->
-    Interpreter.eval ~closure a >>= fun a ->
+    Interpreter.eval closure a >>= fun a ->
     begin match a with
       | Nil         -> Ok Nil
       | Cons (a, _) -> Ok a

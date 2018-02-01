@@ -16,12 +16,8 @@
 
 open Grammar
 open Lexer
-open Lexing
+open Sedlexing
 open Utils
-
-let print_position outx lexbuf =
-  let pos = lexbuf.lex_curr_p in
-  Printf.fprintf outx "%d:%d" pos.pos_lnum (pos.pos_cnum - pos.pos_bol + 1)
 
 let parse_with_error lexbuf =
   try Syntax.parse Lexer.read Parser.entry lexbuf with
@@ -30,7 +26,7 @@ let parse_with_error lexbuf =
     None
 
 let eval l =
-  Interpreter.eval ~closure:Closure.empty l >>= World.shift
+  Interpreter.eval Closure.empty l >>= World.shift
 
 let parse lexbuf =
   match parse_with_error lexbuf with
@@ -43,11 +39,7 @@ let repl () =
   while !live do
     try
       Printf.printf ": ";
-      read_line ()
-      |> Sedlexing.Utf8.from_string
-      |> Syntax.create_lexbuf
-      |> parse
-      |> function
+      read_line () |> Utf8.from_string |> Syntax.create_lexbuf |> parse |> function
       | Nil -> live := false
       | t -> match eval t with
         | Ok t -> Grammar.to_string t |> Printf.printf "-> %s\n"
@@ -56,11 +48,8 @@ let repl () =
     | Interpreter.Throw e ->
       Printf.printf "%s -- Uncaught exception\n" (Grammar.to_string e);
       Trace.reset ()
-    | Failure _ ->
-      ()
-    | End_of_file ->
-      live := false;
-      ()
+    | Failure _ -> ()
+    | End_of_file -> live := false; ()
   done
 
 let load_all buf =
@@ -71,21 +60,20 @@ let load_all buf =
       try
         match parse buf |> eval with
         | Ok t -> res := t
-        | Error err ->
-          Printf.printf "%s\n" err;
-          live := false
+        | Error err -> Printf.printf "%s\n" err; live := false
       with
       | Interpreter.Throw e ->
         Printf.printf "%s -- Uncaught exception\n" (Grammar.to_string e);
         flush stdout;
+        Trace.reset ();
         res := e;
         live := false
       | Failure _
-      | End_of_file ->
-        live := false
+      | End_of_file -> live := false
       | e ->
         Printf.printf ">> %s\n" (Printexc.to_string e);
         flush stdout;
+        Trace.reset ();
         res := Nil
     done;
     !res
@@ -94,7 +82,7 @@ let load filename =
   try
     let dsc = Unix.openfile filename [ Unix.O_RDONLY ] 0o640 in
     let inx = Unix.in_channel_of_descr dsc in
-    let slx = Sedlexing.Utf8.from_channel inx in
+    let slx = Utf8.from_channel inx in
     let buf = Syntax.create_lexbuf ~file:filename slx in
     let res = load_all buf in
     Unix.close dsc;

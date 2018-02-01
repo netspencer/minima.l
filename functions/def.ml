@@ -22,11 +22,11 @@ let name = "def"
 let rec run closure = function
   | Cons (Symbol name as sym, (Cons (Nil, Cons (String _, Cons (Cons _ as body, Nil)))))
   | Cons (Symbol name as sym, (Cons (Nil, Cons (Cons _ as body, Nil)))) ->
-    World.set name (Lambda.mkfun ~closure name Nil body);
+    World.set name (Lambda.mkfun closure name Nil body);
     Ok sym
   | Cons (Symbol name as sym, (Cons (Cons _ as args, Cons (String _, Cons (Cons _ as body, Nil)))))
   | Cons (Symbol name as sym, (Cons (Cons _ as args, Cons (Cons _ as body, Nil)))) ->
-    World.set name (Lambda.mkfun ~closure name args body);
+    World.set name (Lambda.mkfun closure name args body);
     Ok sym
   | t -> Error.undefined t
 

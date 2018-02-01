@@ -22,12 +22,19 @@ let name = "cons"
 
 let rec run closure = function
   | Nil -> Ok Nil
+  | Cons (a, Nil) ->
+    Interpreter.eval closure a >>= fun a ->
+    let body = Cons (Symbol "cons", Cons (a, Cons (Symbol "a", Nil)))
+    and args = Cons (Symbol "a", Nil)
+    in
+    Cons (Symbol "λ", Cons (args, Cons (body, Nil)))
+    |> Interpreter.eval closure
   | Cons (a, Cons (b, Nil)) ->
-    Interpreter.eval ~closure a >>= fun a ->
-    Interpreter.eval ~closure b >>= fun b ->
+    Interpreter.eval closure a >>= fun a ->
+    Interpreter.eval closure b >>= fun b ->
     Ok (Cons (a, b))
   | Cons (a, b) ->
-    Interpreter.eval ~closure a >>= fun a ->
+    Interpreter.eval closure a >>= fun a ->
     run closure b >>= fun b ->
     Ok (Cons (a, b))
   | t -> Error.undefined t

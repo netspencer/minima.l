@@ -20,15 +20,12 @@ open Utils
 
 let name = "closure"
 
-let to_list c =
-  Closure.fold (fun s e acc -> Cons (Cons (String s, e), acc)) c Nil
-
 let process = function
-  | Function (_, _, _, c) -> Ok (to_list c)
+  | Function (_, _, _, c) -> Ok (Utils.closure_to_list c)
   | _ -> Ok Nil
 
 let run closure = function
   | Cons (a, Nil)
-  | a -> Interpreter.eval ~closure a >>= process
+  | a -> Interpreter.eval closure a >>= process
 
 let hook = (name, run)
