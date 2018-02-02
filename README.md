@@ -232,6 +232,24 @@ using the argument assignation process described above.
 -> 2
 ```
 
+##### lift
+
+```lisp
+(lift 'fn)
+```
+
+Lift a function object into a lambda definition list. The function's closure is
+lost in the process.
+
+```lisp
+: (def add (a b) (+ a b))
+-> add
+: add
+-> λ ((a b) (+ a b))
+: (lift @)
+-> (λ (a b) (+ a b))
+```
+
 ##### load
 
 ```lisp

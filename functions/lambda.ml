@@ -42,7 +42,7 @@ let rec collect closure excl args body c =
 let mkfun closure name args body excl =
   let limits = define args Args.empty in
   let closure = collect closure excl limits body Closure.empty in
-  Function (name, args, body, closure)
+  Function (args, body, closure)
 
 let rec run closure = function
   | Cons (Nil, Cons (Cons _ as body, Nil)) ->

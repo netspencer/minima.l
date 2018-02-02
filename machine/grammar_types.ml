@@ -19,7 +19,7 @@ type t =
   | Nil
   | Any
   | Internal of string * (t Closure.t -> t -> (t, string) result)
-  | Function of string * t * t * t Closure.t
+  | Function of t * t * t Closure.t
   | Symbol   of string
   | Number   of int64
   | String   of string

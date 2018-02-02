@@ -16,26 +16,17 @@
 
 open Machine
 open Grammar
-open Lexer
-open Lexing
 open Utils
 
-let name = "prin"
+let name = "lift"
 
-let rec prin closure chan t =
-  match t with
-  | Nil                -> Ok t
-  | T                  -> Printf.fprintf chan "T"; Ok t
-  | Any                -> Printf.fprintf chan "*"; Ok t
-  | Number n           -> Printf.fprintf chan "%Ld" n; Ok t
-  | String s           -> Printf.fprintf chan "%s" s; Ok t
-  | Internal (s, _)    -> Printf.fprintf chan "<%s>" s; Ok t
-  | Function (_, _, _) -> Printf.fprintf chan "<λ>"; Ok t
-  | Symbol s           -> Printf.fprintf chan "%s" s; Ok t
-  | Cons (a, Nil)      -> Interpreter.eval closure a >>= prin closure chan;
-  | Cons (a, b)        -> Interpreter.eval closure a >>= prin closure chan |> ignore; prin closure chan b
-
-let run closure t =
-  !Interpreter.out_channel |> fun (_, chan) -> prin closure chan t
+let run closure = function
+  | Cons (fn, Nil) ->
+    Interpreter.eval closure fn >>= begin function
+      | Function (args, body, _) ->
+        Ok (Cons (Symbol "λ", Cons (args, Cons (body, Nil))))
+      | t -> Error.undefined t
+    end
+  | t -> Error.undefined t
 
 let hook = (name, run)

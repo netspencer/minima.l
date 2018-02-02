@@ -44,6 +44,7 @@ let functions = [
   Functions.Lambda.hook;
   Functions.Le.hook;
   Functions.Let.hook;
+  Functions.Lift.hook;
   Functions.Line.hook;
   Functions.List.hook;
   Functions.Load.hook;

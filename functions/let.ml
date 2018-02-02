@@ -22,18 +22,18 @@ let name = "let"
 
 let rec bind = function
   | Nil, fn -> Ok (Cons (fn, Nil))
-  | Cons (Cons (args, values), rest), Function (name, _, body, closure) ->
+  | Cons (Cons (args, values), rest), Function (_, body, closure) ->
     Interpreter.eval closure values >>=
     build rest name args body closure
   | t, _ -> Error.undefined t
 
 and build rest name args body closure values =
   let closure = Interpreter.push closure args values in
-  bind (rest, Function (name, Nil, body, closure))
+  bind (rest, Function (Nil, body, closure))
 
 let run closure = function
   | Cons (assignments, Cons (prg, Nil)) ->
-    let fn = Function ("λ", Nil, prg, closure) in
+    let fn = Function (Nil, prg, closure) in
     bind (assignments, fn) >>= Interpreter.eval closure
   | t -> Error.undefined t
 

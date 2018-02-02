@@ -21,7 +21,7 @@ open Utils
 let name = "closure"
 
 let process = function
-  | Function (_, _, _, c) -> Ok (Utils.closure_to_list c)
+  | Function (_, _, c) -> Ok (Utils.closure_to_list c)
   | _ -> Ok Nil
 
 let run closure = function

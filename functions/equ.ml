@@ -31,8 +31,8 @@ let rec (==) a b =
   | String i, String j
   | Symbol i, Symbol j -> String.equal i j
   (* Functions. *)
-  | Function (_, a0, b0, _), Cons (a1, Cons (b1, _))
-  | Function (_, a0, b0, _), Function (_, a1, b1, _) -> a0 == a1 && b0 == b1
+  | Function (a0, b0, _), Cons (a1, Cons (b1, _))
+  | Function (a0, b0, _), Function (a1, b1, _) -> a0 == a1 && b0 == b1
   (* Lists. *)
   | Cons (a0, b0), Cons (a1, b1) -> a0 == a1 && b0 == b1
   | _ -> false

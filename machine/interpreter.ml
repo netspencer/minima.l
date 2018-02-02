@@ -78,11 +78,11 @@ let rec push closure args values =
   | _, _ -> closure
 
 and curry closure = function
-  | Function (n, Cons (a0, aN), b, c0), Cons (v0, vN) ->
+  | Function (Cons (a0, aN), b, c0), Cons (v0, vN) ->
     eval closure v0 >>= fun v0 ->
-    curry closure (Function (n, aN, b, c0), vN) >>=
+    curry closure (Function (aN, b, c0), vN) >>=
     begin function
-      | Function (_, aN, _, cN) -> Ok (Function (n, aN, b, push cN a0 v0))
+      | Function (aN, _, cN) -> Ok (Function (aN, b, push cN a0 v0))
       | l -> Error.cannot_execute l
     end
   | fn, _ -> Ok fn
@@ -93,7 +93,7 @@ and exec closure values = function
   | Function _ as fn ->
     curry closure (fn, values) >>=
     begin function
-      | Function (_, Nil, body, closure) -> eval closure body
+      | Function (Nil, body, closure) -> eval closure body
       | res -> Ok res
     end
   | (Number _ as v)
