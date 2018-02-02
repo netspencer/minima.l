@@ -108,6 +108,15 @@ therefore been defined as such:
 -> Nil
 ```
 
+### Recursion
+
+Function defined using `def` can be recursive, i.e. call themselves. When
+functions are defined, symbols with their name are not resolved in their closure
+and are resolved in the symbol domain instead. Same goes when multiple
+functions are defined using `def`, allowing mutual recursion between functions.
+However, there is a caveat: since the function symbols are resolved dynamically,
+redefining these symbols will lead to undefined behavior.
+
 ### Argument assignation
 
 Assignation of arguments in either `def` of `lamda` functions support
@@ -153,7 +162,7 @@ the script.
 ##### def
 
 ```lisp
-(def sym args [str] prg)
+(def sym args [str] prg ...)
 ```
 
 Define a function with arguments `args` and body `prg` and associate it with
@@ -161,7 +170,7 @@ the symbol `sym`. An optional `str` can be specified as a documentation string
 and is ignored by the interpreter.
 
 ```lisp
-: (def add (X Y) (+ X Y))
+: (def add (x y) (+ x y))
 -> add
 ```
 
@@ -173,6 +182,18 @@ symbol. Indeed, the following expression are strictly equivalent:
 -> add
 : (setq add (λ (a b) (+ a b)))
 -> (λ (a b) (+ a b))
+```
+
+Multiple functions can be defined at the same time. This is especially useful
+when functions are mutually recursive:
+
+```lisp
+: (def
+    a0 (n) (?: (< n 10) (b0 (+ n 1)) (cons 'a0 n))
+    b0 (n) (?: (< n 10) (a0 (+ n 1)) (cons 'b0 n)))
+-> b
+: (a0 1)
+-> (b0 . 10)
 ```
 
 ##### eval

@@ -20,6 +20,7 @@ open Grammar
 let functions = [
   Functions.Add.hook;
   Functions.And.hook;
+  Functions.Atmp.hook;
   Functions.Car.hook;
   Functions.Catch.hook;
   Functions.Case.hook;

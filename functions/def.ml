@@ -19,15 +19,37 @@ open Grammar
 
 let name = "def"
 
+let rec process closure excl defs ret = function
+  | Nil ->
+    ListLabels.iter2 ~f:(fun name cb -> cb excl |> World.set name) excl defs;
+    Ok ret
+  | Cons (Symbol name as sym, (Cons (Nil, Cons (String _, Cons (Cons _ as body, rest)))))
+  | Cons (Symbol name as sym, (Cons (Nil, Cons (Cons _ as body, rest)))) ->
+    process closure
+      (name :: excl)
+      ((fun excl -> Lambda.mkfun closure name Nil body excl) :: defs)
+      sym rest
+  | Cons (Symbol name as sym, (Cons (Cons _ as args, Cons (String _, Cons (Cons _ as body, rest)))))
+  | Cons (Symbol name as sym, (Cons (Cons _ as args, Cons (Cons _ as body, rest)))) ->
+    process closure
+      (name :: excl)
+      ((fun excl -> Lambda.mkfun closure name args body excl) :: defs)
+      sym rest
+  | t -> Error.undefined t
+
 let rec run closure = function
-  | Cons (Symbol name as sym, (Cons (Nil, Cons (String _, Cons (Cons _ as body, Nil)))))
-  | Cons (Symbol name as sym, (Cons (Nil, Cons (Cons _ as body, Nil)))) ->
-    World.set name (Lambda.mkfun closure name Nil body);
-    Ok sym
-  | Cons (Symbol name as sym, (Cons (Cons _ as args, Cons (String _, Cons (Cons _ as body, Nil)))))
-  | Cons (Symbol name as sym, (Cons (Cons _ as args, Cons (Cons _ as body, Nil)))) ->
-    World.set name (Lambda.mkfun closure name args body);
-    Ok sym
+  | Cons (Symbol name as sym, (Cons (Nil, Cons (String _, Cons (Cons _ as body, rest)))))
+  | Cons (Symbol name as sym, (Cons (Nil, Cons (Cons _ as body, rest)))) ->
+    process closure
+      [ name ]
+      [ (fun excl -> Lambda.mkfun closure name Nil body excl) ]
+      sym rest
+  | Cons (Symbol name as sym, (Cons (Cons _ as args, Cons (String _, Cons (Cons _ as body, rest)))))
+  | Cons (Symbol name as sym, (Cons (Cons _ as args, Cons (Cons _ as body, rest)))) ->
+    process closure
+      [ name ]
+      [ (fun excl -> Lambda.mkfun closure name args body excl) ]
+      sym rest
   | t -> Error.undefined t
 
 let hook = (name, run)

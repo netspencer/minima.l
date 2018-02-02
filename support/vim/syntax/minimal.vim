@@ -25,7 +25,7 @@ syn keyword MinimalSpecial  NIL T _ @ @@ @@@
 
 syn keyword MinimalFuncs case ? ?: ?! while λ
 syn keyword MinimalFuncs + - * / = <> < <= > >= and or not
-syn keyword MinimalFuncs prog nil? fun? lst? num? str?
+syn keyword MinimalFuncs prog atm? nil? fun? lst? num? str? sym?
 syn keyword MinimalFuncs car cdr chars conc cons def env eval join let list load
 syn keyword MinimalFuncs flush in line out prin prinl print println read
 syn keyword MinimalFuncs quit quote setq split sym sh
