@@ -96,7 +96,7 @@ Function can be curried:
 ```
 
 Curryring is available for all user-defined functions as well as for some internal
-functions such as '+', '-', 'and', 'cons', and so on. Many shortcuts can
+functions such as `+`, `-`, `and`, `cons`, and so on. Many shortcuts can
 therefore been defined as such:
 
 ```lisp
